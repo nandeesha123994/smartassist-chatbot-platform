@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure--06%)g-gd1lm)(frc0q_g_fx*16i11z#dd#9-6!)b=dg)-9#-9
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['']
 
 
 # Application definition
@@ -138,3 +138,5 @@ CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000']
 
 # OpenRouter API Key
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
