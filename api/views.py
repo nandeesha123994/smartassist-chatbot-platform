@@ -13,9 +13,15 @@ import requests
 from django.conf import settings
 
 def home_view(request):
-    if request.user.is_authenticated:
-        return redirect('dashboard')
-    return render(request, 'home.html')
+    try:
+        if request.user.is_authenticated:
+            return redirect('dashboard')
+        return render(request, 'home.html')
+    except Exception as e:
+        import traceback
+        print(f"ERROR in home_view: {str(e)}")
+        traceback.print_exc()
+        raise
 
 class CustomLoginView(SuccessMessageMixin, LoginView):
     template_name = 'login.html'
@@ -100,7 +106,6 @@ def project_detail_view(request, project_id):
     })
 
 from django.http import JsonResponse
-from .utils import get_chatbot_response
 import json
 
 import logging
