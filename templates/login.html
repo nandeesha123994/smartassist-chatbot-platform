@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - ChatAI Platform{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+  <div class="auth-grid">
+    <!-- Info Panel (Left) -->
+    <div class="auth-info">
+      <h2 style="font-family: 'Outfit', sans-serif;">Welcome <span
+          style="background: linear-gradient(135deg, #fff 0%, var(--accent-color) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Back.</span>
+      </h2>
+      <p style="color: var(--text-secondary);">Resume your journey into the autonomous intelligence frontier.</p>
+
+      <div class="auth-feature-list">
+        <div class="auth-feature">
+          <i data-lucide="bot"></i>
+          <div>
+            <h4>Agent Persistence</h4>
+            <p>Your agents and their unique personalities are ready for you.</p>
+          </div>
+        </div>
+        <div class="auth-feature">
+          <i data-lucide="history"></i>
+          <div>
+            <h4>Conversation Recovery</h4>
+            <p>Pick up exactly where you left off with full history sync.</p>
+          </div>
+        </div>
+        <div class="auth-feature">
+          <i data-lucide="sparkles"></i>
+          <div>
+            <h4>Model Optimization</h4>
+            <p>Our infrastructure ensures your queries always run at peak speed.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Panel (Right) -->
+    <div class="card" style="padding: 3rem 2.5rem;">
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <div
+          style="background: var(--accent-glow); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+          <i data-lucide="lock" style="color: var(--accent-color); width: 32px; height: 32px;"></i>
+        </div>
+        <h1 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Secure Access</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Elevate your AI orchestration today.</p>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="auth-form-fields">
+          {{ form.as_p }}
+        </div>
+        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 1rem; height: 50px;">
+          <span>Secure Login</span>
+          <i data-lucide="arrow-right" style="width: 18px;"></i>
+        </button>
+      </form>
+
+      <p style="margin-top: 2rem; text-align: center; font-size: 0.9rem; color: var(--text-secondary);">
+        New to ChatAI? <a href="{% url 'register' %}"
+          style="color: var(--accent-color); text-decoration: none; font-weight: 500;">Create an account</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

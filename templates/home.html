@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}ChatAI Platform - Powering the Future of AI Agents{% endblock %}
+
+{% block content %}
+<div class="hero-section" style="text-align: center; padding: 8rem 1rem; position: relative; overflow: hidden;">
+  <div
+    style="position: absolute; top: 10%; left: 50%; transform: translateX(-50%); width: 300px; height: 300px; background: var(--accent-glow); filter: blur(60px); border-radius: 50%; z-index: -1;">
+  </div>
+
+  <div
+    style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.05); padding: 0.5rem 1rem; border-radius: 2rem; border: 1px solid var(--glass-border); margin-bottom: 2rem; font-size: 0.85rem; color: var(--text-secondary);">
+    <i data-lucide="sparkles" style="width: 14px; color: #f59e0b;"></i>
+    <span>The Future of Intelligent Agents is Here</span>
+  </div>
+
+  <h1 style="font-size: 4rem; font-weight: 700; line-height: 1.1; margin-bottom: 1.5rem; letter-spacing: -2px;">
+    Architect Your Own <br>
+    <span
+      style="background: linear-gradient(135deg, #fff 0%, var(--accent-color) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Autonomous
+      AI Agents</span>
+  </h1>
+
+  <p style="font-size: 1.2rem; color: var(--text-secondary); max-width: 650px; margin: 0 auto 3rem; line-height: 1.6;">
+    Build, manage, and deploy specialized AI agents with pinpoint precision.
+    Leverage multi-modal knowledge bases and advanced prompt versioning.
+  </p>
+
+  <div class="hero-cta" style="display: flex; gap: 1.25rem; justify-content: center; align-items: center;">
+    <a href="{% url 'register' %}" class="btn-primary"
+      style="padding: 1rem 2.5rem; font-size: 1.1rem; border-radius: 2rem;">
+      <span>Get Started Free</span>
+      <i data-lucide="zap" style="width: 18px;"></i>
+    </a>
+    <a href="{% url 'login' %}"
+      style="color: var(--text-primary); text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 0.5rem; padding: 1rem 2rem;">
+      <span>Sign In</span>
+      <i data-lucide="chevron-right" style="width: 18px;"></i>
+    </a>
+  </div>
+
+  <!-- Terminal Mockup -->
+  <div class="terminal-window">
+    <div class="terminal-header">
+      <div class="dot red"></div>
+      <div class="dot yellow"></div>
+      <div class="dot green"></div>
+      <span style="font-size: 0.75rem; color: #8b949e; margin-left: 1rem;">consultant.py — chatai-platform</span>
+    </div>
+    <div class="terminal-body">
+      <div style="margin-bottom: 0.5rem;"><span class="command">>>></span> agent.initialize(name="Consultant")</div>
+      <div class="output">Agent initialized. Model: Mistral-7B.</div>
+      <div style="margin-bottom: 0.5rem; margin-top: 1rem;"><span class="command">>>></span> agent.ask("How do I scale
+        my Django app?")</div>
+      <div class="output">
+        To scale your Django application, consider: <br>
+        1. Horizontal scaling with Load Balancers <br>
+        2. Database optimization (Indexing/Caching) <br>
+        3. Asynchronous tasks via Celery <br>
+        4. Robust caching with Redis
+      </div>
+      <div style="margin-top: 1rem;"><span class="command">>>></span> <span class="cursor-blink"></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Workflow Stepper Section -->
+<section class="workflow-section">
+  <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Simple 3-Step Integration</h2>
+  <p style="color: var(--text-secondary); max-width: 600px; margin: 0 auto 3rem;">Start orchestrating your AI ecosystem
+    in minutes, not days.</p>
+
+  <div class="stepper-container">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <i data-lucide="user-plus"
+        style="width: 32px; height: 32px; color: var(--accent-color); margin-bottom: 1.5rem;"></i>
+      <h4>Register Account</h4>
+      <p style="font-size: 0.9rem; color: var(--text-secondary);">Create your secure workspace and prepare your
+        environment.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <i data-lucide="settings-2"
+        style="width: 32px; height: 32px; color: var(--accent-color); margin-bottom: 1.5rem;"></i>
+      <h4>Define Identity</h4>
+      <p style="font-size: 0.9rem; color: var(--text-secondary);">Set your system prompts and verify your OpenRouter API
+        key.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <i data-lucide="messages-square"
+        style="width: 32px; height: 32px; color: var(--accent-color); margin-bottom: 1.5rem;"></i>
+      <h4>Begin Interaction</h4>
+      <p style="font-size: 0.9rem; color: var(--text-secondary);">Start chatting with your agent and monitor real-time
+        history.</p>
+    </div>
+  </div>
+</section>
+
+<div class="features-grid"
+  style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; margin-top: 2rem;">
+  <div class="card" style="padding: 2.5rem; text-align: center;">
+    <div
+      style="background: rgba(99, 102, 241, 0.1); width: 60px; height: 60px; border-radius: 1.25rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; border: 1px solid var(--glass-border);">
+      <i data-lucide="terminal" style="color: var(--accent-color); width: 28px; height: 28px;"></i>
+    </div>
+    <h3 style="margin-bottom: 1rem;">Prompt Laboratory</h3>
+    <p style="color: var(--text-secondary); font-size: 0.95rem;">Fine-tune agent personalities with version-controlled
+      system instructions and real-time playground.</p>
+  </div>
+
+  <div class="card" style="padding: 2.5rem; text-align: center;">
+    <div
+      style="background: rgba(16, 185, 129, 0.1); width: 60px; height: 60px; border-radius: 1.25rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; border: 1px solid var(--glass-border);">
+      <i data-lucide="database" style="color: #10b981; width: 28px; height: 28px;"></i>
+    </div>
+    <h3 style="margin-bottom: 1rem;">Memory Augmentation</h3>
+    <p style="color: var(--text-secondary); font-size: 0.95rem;">Upload documents to build a permanent knowledge base,
+      allowing your agents to reference your specific data.</p>
+  </div>
+
+  <div class="card" style="padding: 2.5rem; text-align: center;">
+    <div
+      style="background: rgba(236, 72, 153, 0.1); width: 60px; height: 60px; border-radius: 1.25rem; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; border: 1px solid var(--glass-border);">
+      <i data-lucide="shield-check" style="color: #ec4899; width: 28px; height: 28px;"></i>
+    </div>
+    <h3 style="margin-bottom: 1rem;">Enterprise Ready</h3>
+    <p style="color: var(--text-secondary); font-size: 0.95rem;">Secure authentication, project isolation, and encrypted
+      API sessions powered by industry-standard protocols.</p>
+  </div>
+</div>
+{% endblock %}

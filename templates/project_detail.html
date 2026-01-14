@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ project.name }} - ChatAI Platform{% endblock %}
+
+{% block content %}
+<div class="project-header"
+  style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end;">
+  <div>
+    <a href="{% url 'dashboard' %}"
+      style="color: var(--text-secondary); text-decoration: none; font-size: 0.9rem; display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.75rem;">
+      <i data-lucide="chevron-left" style="width: 16px;"></i> Back to Dashboard
+    </a>
+    <h1 style="margin: 0; font-size: 2rem;">{{ project.name }}</h1>
+    <p style="color: var(--text-secondary); margin-top: 0.25rem;">{{ project.description }}</p>
+  </div>
+  <div style="display: flex; gap: 0.75rem;">
+    <a href="{% url 'chat' project.id %}" class="btn-primary">
+      <i data-lucide="external-link" style="width: 18px;"></i>
+      <span>Full Chat View</span>
+    </a>
+  </div>
+</div>
+
+<div class="grid-container" style="display: grid; grid-template-columns: 1fr 400px; gap: 2rem; margin-top: 2rem;">
+  <!-- Chat Section -->
+  <section class="chat-section">
+    <div class="card" style="height: 650px; display: flex; flex-direction: column; padding: 1.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="margin: 0; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="message-square"
+            style="color: var(--accent-color); width: 20px;"></i> Agent Interaction</h3>
+        {% if mock_mode %}
+        <span
+          style="background: rgba(245, 158, 11, 0.1); color: #f59e0b; padding: 0.3rem 0.7rem; border-radius: 2rem; font-size: 0.7rem; border: 1px solid rgba(245, 158, 11, 0.2); display: flex; align-items: center; gap: 0.3rem;">
+          <i data-lucide="alert-triangle" style="width: 12px;"></i> Sandbox Mode
+        </span>
+        {% endif %}
+      </div>
+
+      <div id="chat-window"
+        style="flex-grow: 1; overflow-y: auto; margin-bottom: 1.25rem; padding: 1rem; background: rgba(0,0,0,0.25); border-radius: 1rem; display: flex; flex-direction: column; gap: 1rem;">
+        {% for message in project.messages.all %}
+        <div class="chat-bubble {{ message.role }}"
+          style="max-width: 85%; padding: 0.8rem 1.1rem; border-radius: 1.1rem; font-size: 0.95rem; {% if message.role == 'user' %}align-self: flex-end; background: var(--accent-color); color: white; box-shadow: 0 4px 12px var(--accent-glow);{% else %}align-self: flex-start; background: rgba(255,255,255,0.07); border: 1px solid var(--glass-border);{% endif %}">
+          {{ message.content }}
+        </div>
+        {% empty %}
+        <div
+          style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: var(--text-secondary); opacity: 0.6;">
+          <i data-lucide="messages-square" style="width: 48px; height: 48px; margin-bottom: 1rem;"></i>
+          <p style="font-style: italic;">Your conversation history will appear here.</p>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="chat-input-area" style="display: flex; gap: 0.75rem;">
+        <input type="text" id="chat-input" placeholder="Message {{ project.name }}..."
+          style="margin-bottom: 0; border-radius: 2rem;">
+        <button class="btn-primary" id="send-btn" style="border-radius: 2rem; width: 50px; padding: 0;">
+          <i data-lucide="send" style="width: 20px;"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Side Panels -->
+  <aside class="side-panels" style="display: flex; flex-direction: column; gap: 1.5rem;">
+    <!-- Prompts Section -->
+    <div class="card" style="padding: 1.5rem;">
+      <h3 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;"><i data-lucide="user-cog"
+          style="color: var(--accent-color); width: 20px;"></i> Agent Identity</h3>
+      <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 1.25rem;">Define how your agent thinks
+        and behaves.</p>
+
+      <div class="prompts-list" style="margin-bottom: 1.5rem; max-height: 200px; overflow-y: auto;">
+        {% for prompt in prompts|dictsortreversed:"created_at" %}
+        <div class="prompt-item"
+          style="padding: 0.8rem; background: rgba(255,255,255,0.03); border-radius: 0.75rem; margin-bottom: 0.6rem; border: 1px solid var(--glass-border); position: relative;">
+          {% if forloop.first %}
+          <span
+            style="position: absolute; top: -8px; right: 10px; background: var(--accent-color); font-size: 0.6rem; padding: 2px 6px; border-radius: 10px;">ACTIVE</span>
+          {% endif %}
+          <p style="font-size: 0.85rem; line-height: 1.4;">{{ prompt.content|truncatewords:20 }}</p>
+          <small style="color: var(--text-secondary); font-size: 0.7rem; display: block; margin-top: 0.4rem;">{{
+            prompt.created_at|date:"M d, H:i" }}</small>
+        </div>
+        {% empty %}
+        <p style="color: var(--text-secondary); font-size: 0.85rem; text-align: center; padding: 1rem;">No instructions
+          yet.</p>
+        {% endfor %}
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="add_prompt" value="1">
+        {{ prompt_form.content }}
+        <button type="submit" class="btn-primary" style="width: 100%; height: 40px; font-size: 0.9rem;">
+          Update Identity
+        </button>
+      </form>
+    </div>
+
+    <!-- Files Section -->
+    <div class="card" style="padding: 1.5rem;">
+      <h3 style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;"><i data-lucide="file-text"
+          style="color: var(--accent-color); width: 20px;"></i> Knowledge Base</h3>
+
+      <div class="files-list" style="margin-bottom: 1.5rem; max-height: 150px; overflow-y: auto;">
+        {% for file in files %}
+        <div class="file-item"
+          style="padding: 0.7rem; background: rgba(255,255,255,0.03); border-radius: 0.75rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--glass-border);">
+          <div style="display: flex; align-items: center; gap: 0.5rem; overflow: hidden;">
+            <i data-lucide="file" style="width: 14px; color: var(--text-secondary);"></i>
+            <span style="font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{
+              file.name }}</span>
+          </div>
+          <a href="{{ file.file.url }}" target="_blank"
+            style="color: var(--accent-color); font-size: 0.75rem; text-decoration: none;">
+            <i data-lucide="download" style="width: 14px;"></i>
+          </a>
+        </div>
+        {% empty %}
+        <p style="color: var(--text-secondary); font-size: 0.85rem; text-align: center; padding: 1rem;">No files
+          uploaded.</p>
+        {% endfor %}
+      </div>
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="upload_file" value="1">
+        <label style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 0.4rem; display: block;">Add
+          document</label>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+          <input type="file" name="file" required
+            style="margin-bottom: 0; font-size: 0.75rem; padding: 0.4rem; flex: 1;">
+          <button type="submit" class="btn-primary" style="width: 40px; padding: 0; height: 35px;">
+            <i data-lucide="upload-cloud" style="width: 18px;"></i>
+          </button>
+        </div>
+      </form>
+    </div>
+  </aside>
+</div>
+
+<style>
+  .prompt-item:hover {
+    border-color: var(--accent-color) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+  }
+
+  #chat-window::-webkit-scrollbar {
+    width: 6px;
+  }
+</style>
+
+<script>
+  const chatWindow = document.getElementById('chat-window');
+  const chatInput = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('send-btn');
+
+  function appendMessage(role, content) {
+    const bubble = document.createElement('div');
+    bubble.className = `chat-bubble ${role}`;
+    bubble.style.maxWidth = '85%';
+    bubble.style.padding = '0.8rem 1.1rem';
+    bubble.style.borderRadius = '1.1rem';
+    bubble.style.fontSize = '0.95rem';
+    bubble.style.animation = 'slideUp 0.3s ease-out';
+
+    if (role === 'user') {
+      bubble.style.alignSelf = 'flex-end';
+      bubble.style.background = 'var(--accent-color)';
+      bubble.style.color = 'white';
+      bubble.style.boxShadow = '0 4px 12px var(--accent-glow)';
+    } else {
+      bubble.style.alignSelf = 'flex-start';
+      bubble.style.background = 'rgba(255,255,255,0.07)';
+      bubble.style.border = '1px solid var(--glass-border)';
+    }
+
+    bubble.textContent = content;
+    chatWindow.appendChild(bubble);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+  }
+
+  async function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+
+    appendMessage('user', message);
+    chatInput.value = '';
+
+    // Show typing indicator
+    const typing = document.createElement('div');
+    typing.id = 'loading-indicator';
+    typing.style.alignSelf = 'flex-start';
+    typing.style.padding = '0.75rem';
+    typing.style.color = 'var(--text-secondary)';
+    typing.style.fontSize = '0.85rem';
+    typing.style.display = 'flex';
+    typing.style.alignItems = 'center';
+    typing.style.gap = '0.5rem';
+    typing.innerHTML = '<i data-lucide="loader-2" class="spin" style="width: 14px;"></i> AI is formulating thoughts...';
+    chatWindow.appendChild(typing);
+    lucide.createIcons(); // Initialize the new icon
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    try {
+      const response = await fetch("{% url 'chat_api' project.id %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ message: message })
+      });
+
+      typing.remove();
+
+      if (!response.ok) {
+        appendMessage('assistant', "I encountered a server error. Please try again.");
+        return;
+      }
+
+      const data = await response.json();
+      appendMessage('assistant', data.response || "I couldn't generate a response.");
+
+    } catch (error) {
+      typing.remove();
+      appendMessage('assistant', "Network error: Connection lost.");
+    }
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+  // Scroll to bottom on load
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+
+  // Style for spinning icon
+  const style = document.createElement('style');
+  style.innerHTML = `
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .spin { animation: spin 2s linear infinite; }
+  `;
+  document.head.appendChild(style);
+</script>
+{% endblock %}
