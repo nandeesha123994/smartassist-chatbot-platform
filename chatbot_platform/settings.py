@@ -101,8 +101,12 @@ MEDIA_URL = '/media/'
 
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
 
-# Security settings - only enable in production
-if not DEBUG:
+# Security settings - Enable HTTPS security only on production (Render)
+# Detect if running on Render by checking for Render-specific environment variable
+IS_RENDER = os.getenv('RENDER', 'False') == 'True'
+
+if not DEBUG and IS_RENDER:
+    # Enable HTTPS-only security settings for Render production
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
@@ -117,6 +121,9 @@ if not DEBUG:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
+elif not DEBUG:
+    # Running with DEBUG=False locally - only enable basic security
+    SECURE_BROWSER_XSS_FILTER = True
 
 CSRF_TRUSTED_ORIGINS = [
     'https://smartassist-chatbot-platform.onrender.com',
