@@ -10,7 +10,17 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure--06%)g-gd1lm)(frc0q_g_fx*1
 
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
+# ALLOWED_HOSTS configuration
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+
+# Always include Render domain when running on Render
+IS_RENDER = os.getenv('RENDER', 'False') == 'True'
+if IS_RENDER:
+    ALLOWED_HOSTS.append('smartassist-chatbot-platform.onrender.com')
+    # Also allow Render's internal hostname if provided
+    render_external_hostname = os.getenv('RENDER_EXTERNAL_HOSTNAME')
+    if render_external_hostname:
+        ALLOWED_HOSTS.append(render_external_hostname)
 
 INSTALLED_APPS = [
     'django.contrib.admin',
