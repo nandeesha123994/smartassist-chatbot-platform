@@ -103,6 +103,9 @@ def project_detail_view(request, project_id):
 def get_ai_response(message, system_prompt=None, history=None):
     # DEBUG LOGGING FOR RENDER
     api_key = settings.OPENROUTER_API_KEY
+    if api_key:
+        api_key = api_key.strip()
+    
     is_valid_format = api_key and api_key.startswith("sk-or-v1-")
     
     print(f"DEBUG: Checking API Key...")
@@ -110,9 +113,8 @@ def get_ai_response(message, system_prompt=None, history=None):
         print("DEBUG: API Key is None or Empty")
     else:
         masked_key = f"{api_key[:10]}...{api_key[-5:]}" if len(api_key) > 15 else "SHORT_KEY"
-        print(f"DEBUG: API Key Present. Length: {len(api_key)}. Preview: {masked_key}")
-        print(f"DEBUG: Valid Format? {'Yes' if is_valid_format else 'No'}")
-
+        print(f"DEBUG: API Key Present (Stripped). Length: {len(api_key)}. Preview: {masked_key}")
+    
     # Graceful fallback for missing or placeholder keys
     if not api_key or "yourkeyhere" in api_key:
         return f"Sandbox Mode: I received your message '{message}'. Since no valid API key is set, I'm simulating a response."
@@ -138,21 +140,31 @@ def get_ai_response(message, system_prompt=None, history=None):
     try:
         response = requests.post(url, headers=headers, json=data, timeout=20)
         
+        # DEBUG RESPONSE
+        if response.status_code != 200:
+            print(f"DEBUG: API Request Failed. Status: {response.status_code}")
+            print(f"DEBUG: Response Body: {response.text}")
+
         # Handle 401 Unauthorized (User not found / Invalid Key) gracefully
         if response.status_code == 401:
-            return f"Sandbox Mode (Auth Failed): I received '{message}'. The API key seems invalid, so I'm simulating a helpful response."
+            try:
+                err_body = response.json()
+                msg = err_body.get('error', {}).get('message', 'Unknown Auth Error')
+            except:
+                msg = response.text
+            return f"Sandbox Mode (Auth Failed): {msg}"
 
         response_json = response.json()
         if "choices" not in response_json:
             error_msg = response_json.get('error', {}).get('message', 'Unknown error')
-            # If specifically user not found, fallback too (double safety)
             if "User not found" in error_msg:
-                 return f"Sandbox Mode (User not found): I received '{message}'. Simulating response."
+                 return f"Sandbox Mode (User not found): {error_msg}"
             return f"AI Error: {error_msg}"
         return response_json["choices"][0]["message"]["content"]
     except requests.Timeout:
         return "AI Error: Request timed out. Try again."
     except Exception as e:
+        print(f"DEBUG: Exception during request: {e}")
         return f"AI Error: {str(e)}"
 
 @login_required
