@@ -101,13 +101,25 @@ def project_detail_view(request, project_id):
     })
 
 def get_ai_response(message, system_prompt=None, history=None):
+    # DEBUG LOGGING FOR RENDER
+    api_key = settings.OPENROUTER_API_KEY
+    is_valid_format = api_key and api_key.startswith("sk-or-v1-")
+    
+    print(f"DEBUG: Checking API Key...")
+    if not api_key:
+        print("DEBUG: API Key is None or Empty")
+    else:
+        masked_key = f"{api_key[:10]}...{api_key[-5:]}" if len(api_key) > 15 else "SHORT_KEY"
+        print(f"DEBUG: API Key Present. Length: {len(api_key)}. Preview: {masked_key}")
+        print(f"DEBUG: Valid Format? {'Yes' if is_valid_format else 'No'}")
+
     # Graceful fallback for missing or placeholder keys
-    if not settings.OPENROUTER_API_KEY or "yourkeyhere" in settings.OPENROUTER_API_KEY:
+    if not api_key or "yourkeyhere" in api_key:
         return f"Sandbox Mode: I received your message '{message}'. Since no valid API key is set, I'm simulating a response."
 
     url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {
-        "Authorization": f"Bearer {settings.OPENROUTER_API_KEY}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
         "HTTP-Referer": "http://localhost:8000",
         "X-Title": "Django Chatbot"
