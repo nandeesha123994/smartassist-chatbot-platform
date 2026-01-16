@@ -13,9 +13,9 @@ try:
     response = client.get('/')
     print(f"Status Code: {response.status_code}")
     if response.status_code == 200:
-        print("✓ Home page loads successfully")
+        print("Home page loads successfully")
     else:
-        print(f"✗ Error: {response.status_code}")
+        print(f"Error: {response.status_code}")
         print(response.content[:500])
 except Exception as e:
     print(f"Exception: {e}")

@@ -17,7 +17,8 @@ class SuccessMessageTest(TestCase):
 
     def test_registration_success_message(self):
         response = self.client.post(self.register_url, self.user_data, follow=True)
-        messages = list(get_messages(response.request))
+        # Messages are consumed by the template, so check response context
+        messages = list(response.context['messages'])
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "Registration successful! Welcome to ChatAI.")
 
@@ -31,6 +32,6 @@ class SuccessMessageTest(TestCase):
             'password': 'testpassword123'
         }, follow=True)
         
-        messages = list(get_messages(response.request))
+        messages = list(response.context['messages'])
         self.assertEqual(len(messages), 1)
         self.assertEqual(str(messages[0]), "Login successful! Welcome back.")

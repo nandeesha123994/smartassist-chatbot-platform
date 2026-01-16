@@ -14,10 +14,10 @@ def run_sqlite_migrations():
 
     if "sqlite3" in db_engine:
         try:
-            print("🔧 Running SQLite migrations after app init...")
+            print("[INFO] Running SQLite migrations after app init...")
             call_command("migrate", interactive=False)
-            print("✅ SQLite migrations done!")
+            print("[SUCCESS] SQLite migrations done!")
         except Exception as e:
-            print("❌ Migration failed:", e)
+            print("[ERROR] Migration failed:", e)
 
 run_sqlite_migrations()
