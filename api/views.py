@@ -135,8 +135,8 @@ def get_ai_response(message, system_prompt=None, history=None):
                 messages.append({"role": msg['role'], "content": msg['content']})
     messages.append({"role": "user", "content": message})
     
-    # Switch to Llama 3 8B Free - reduced blocking chance
-    data = {"model": "meta-llama/llama-3-8b-instruct:free", "messages": messages}
+    # Switch to Llama 3 8B - User requested specific model ID
+    data = {"model": "meta-llama/llama-3-8b-instruct", "messages": messages}
     try:
         response = requests.post(url, headers=headers, json=data, timeout=20)
         
