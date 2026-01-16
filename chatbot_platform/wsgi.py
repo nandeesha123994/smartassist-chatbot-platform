@@ -1,7 +1,17 @@
 import os
 from django.core.wsgi import get_wsgi_application
 
+
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'chatbot_platform.settings')
+
+# AUTO-MIGRATE ON STARTUP (Fix for missing tables on Render)
+try:
+    from django.core.management import call_command
+    print("WSGI: Attempting to run migrations...")
+    call_command('migrate')
+    print("WSGI: Migrations completed successfully.")
+except Exception as e:
+    print(f"WSGI: Migration failed: {e}")
 
 application = get_wsgi_application()
 
