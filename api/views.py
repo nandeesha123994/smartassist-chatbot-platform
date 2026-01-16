@@ -123,8 +123,8 @@ def get_ai_response(message, system_prompt=None, history=None):
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
-        "HTTP-Referer": "http://localhost:8000",
-        "X-Title": "Django Chatbot"
+        "HTTP-Referer": "https://smartassist-chatbot-platform.onrender.com",
+        "X-Title": "SmartAssist Chatbot"
     }
     messages = []
     if system_prompt:
