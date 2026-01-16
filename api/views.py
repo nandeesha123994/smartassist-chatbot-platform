@@ -122,9 +122,7 @@ def get_ai_response(message, system_prompt=None, history=None):
     url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://smartassist-chatbot-platform.onrender.com",
-        "X-Title": "SmartAssist Chatbot"
+        "Content-Type": "application/json"
     }
     messages = []
     if system_prompt:
@@ -136,7 +134,9 @@ def get_ai_response(message, system_prompt=None, history=None):
             else:
                 messages.append({"role": msg['role'], "content": msg['content']})
     messages.append({"role": "user", "content": message})
-    data = {"model": "allenai/molmo-2-8b:free", "messages": messages}
+    
+    # Switch to Llama 3 8B Free - reduced blocking chance
+    data = {"model": "meta-llama/llama-3-8b-instruct:free", "messages": messages}
     try:
         response = requests.post(url, headers=headers, json=data, timeout=20)
         
