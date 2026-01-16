@@ -134,11 +134,43 @@ def get_ai_response(message, system_prompt=None, history=None):
             else:
                 messages.append({"role": msg['role'], "content": msg['content']})
     messages.append({"role": "user", "content": message})
-    
-    # Switch to Llama 3 8B - User requested specific model ID
-    data = {"model": "meta-llama/llama-3-8b-instruct", "messages": messages}
-    try:
-        response = requests.post(url, headers=headers, json=data, timeout=20)
+    # List of models to try in order of preference (Free/Cheaper -> capabilities)
+    models = [
+        "meta-llama/llama-3-8b-instruct",
+        "meta-llama/llama-3-70b-instruct",
+        "mistralai/mistral-7b-instruct",
+        "openai/gpt-3.5-turbo"
+    ]
+
+    response = None
+    last_error = None
+
+    for model in models:
+        try:
+            print(f"DEBUG: Attempting with model: {model}")
+            data = {"model": model, "messages": messages}
+            response = requests.post(url, headers=headers, json=data, timeout=30)
+            
+            # If successful, break the loop
+            if response.status_code == 200:
+                print(f"DEBUG: Success with model: {model}")
+                break
+            else:
+                print(f"DEBUG: Failed with model {model}: {response.status_code} - {response.text}")
+                last_error = response
+        except Exception as e:
+            print(f"DEBUG: Exception with model {model}: {str(e)}")
+            last_error = e
+            continue
+
+    # If we exhausted all models and still don't have a 200 response
+    if not response or response.status_code != 200:
+        if isinstance(last_error, requests.Response):
+             # Re-raise the last failure so the existing error handling below catches it
+             response = last_error
+        else:
+             # It was a connection error or similar
+             return f"Error: All models failed. Last error: {str(last_error)}"
         
         # DEBUG RESPONSE
         if response.status_code != 200:
